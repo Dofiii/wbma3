@@ -1,0 +1,68 @@
+
+import {useState} from 'react';
+import {validator} from '../utils/validator';
+
+const constraints = {
+  username: {
+    presence: {
+      message: 'Ei voi olla tyhjä.',
+    },
+    length: {
+      minimum: 3,
+      message: 'Vähintään 3 merkkiä.',
+    },
+  },
+  password: {
+    presence: {
+      message: 'Ei voi olla tyhjä.',
+    },
+    length: {
+      minimum: 5,
+      message: 'Cyka blyat',
+    },
+  },
+};
+
+const useLoginForm = (callback) => {
+  const [loginErrors, setLoginErrors] = useState({});
+  const [inputs, setInputs] = useState({
+    username: '',
+    password: '',
+  });
+
+  const handleInputChange = (name, text) => {
+    const error = validator(name, text, constraints);
+    setLoginErrors((loginErrors) => {
+      return {
+        ...loginErrors,
+        [name]: error,
+      };
+    });
+
+    setInputs((inputs) => {
+      return {
+        ...inputs,
+        [name]: text,
+      };
+    });
+  };
+  const validateOnSend = () => {
+    const usernameError = validator('username', inputs.username, constraints);
+    const passwordError = validator('password', inputs.password, constraints);
+
+    if (usernameError !== null || passwordError !== null) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  return {
+    handleInputChange,
+    validateOnSend,
+    inputs,
+    loginErrors,
+  };
+};
+
+export default useLoginForm;
